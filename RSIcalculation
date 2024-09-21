@@ -1,0 +1,40 @@
+import streamlit as st
+import numpy as np
+
+# Function to calculate the Ryznar Stability Index
+def calculate_rsi(TDS, temp, CaH, M_Alk, pHa):
+    A = (np.log10(TDS) - 1) / 10
+    B = (-13.12 * np.log10(temp + 273)) + 34.55
+    C = np.log10(CaH) - 0.4
+    D = np.log10(M_Alk)
+    pHs = (9.3 + A + B) - (C + D)
+    RSI = 2 * pHs - pHa
+    return RSI
+
+# Streamlit app layout
+st.title("Ryznar Stability Index Calculator")
+st.write("Calculate the Ryznar Stability Index (RSI) for water treatment.")
+
+# Input fields
+TDS = st.number_input("Total Dissolved Solids (ppm)", min_value=0.0)
+temp = st.number_input("Temperature (°C)", min_value=0.0)
+CaH = st.number_input("Calcium Hardness (ppm as CaCO3)", min_value=0.0)
+M_Alk = st.number_input("M-Alkalinity (ppm as CaCO3)", min_value=0.0)
+pHa = st.number_input("Actual pH", min_value=0.0)
+
+# Calculate RSI when button is clicked
+if st.button("Calculate RSI"):
+    rsi = calculate_rsi(TDS, temp, CaH, M_Alk, pHa)
+    st.write(f"Ryznar Stability Index (RSI): {rsi:.2f}")
+
+    # Provide prediction based on RSI value
+    if rsi < 5.5:
+        st.write("Prediction: Heavy scale will form.")
+    elif 5.5 <= rsi < 6.2:
+        st.write("Prediction: Moderate scale will form.")
+    elif 6.2 <= rsi < 6.8:
+        st.write("Prediction: Slight scale will form.")
+    elif 6.8 <= rsi < 8.5:
+        st.write("Prediction: Corrosive water.")
+    else:
+        st.write("Prediction: Very corrosive water.")
